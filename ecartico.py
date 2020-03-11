@@ -32,7 +32,7 @@ def main(fp='data/ecartico.nt'):
     TITLE = ["ECARTICO"]
     DESCRIPTION = [
         Literal(
-            """ECARTICO is a comprehensive collection of structured biographical data concerning painters, engravers, printers, book sellers, gold- and silversmiths and others involved in the ‘cultural industries’ of the Low Countries in the sixteenth and seventeenth centuries. As in other biographical databases, users can [search and browse](http://www.vondel.humanities.uva.nl/ecartico/persons/) for data on individuals or make selections of certain types of data. However, ECARTICO also allows users to [visualize and analyze](http://www.vondel.humanities.uva.nl/ecartico/analysis/) data on cultural entrepreneurs and their ‘milieus’.
+            """Linking cultural industries in the early modern Low Countries, ca. 1475 - ca. 1725. ECARTICO is a comprehensive collection of structured biographical data concerning painters, engravers, printers, book sellers, gold- and silversmiths and others involved in the ‘cultural industries’ of the Low Countries in the sixteenth and seventeenth centuries. As in other biographical databases, users can [search and browse](http://www.vondel.humanities.uva.nl/ecartico/persons/) for data on individuals or make selections of certain types of data. However, ECARTICO also allows users to [visualize and analyze](http://www.vondel.humanities.uva.nl/ecartico/analysis/) data on cultural entrepreneurs and their ‘milieus’.
 
 ## Focus on analysis
 
@@ -73,18 +73,21 @@ Current projects are:
     DATE = Literal(datetime.datetime.now().strftime('%Y-%m-%d'),
                    datatype=XSD.datetime)
 
-    ds = Dataset(create.term('id/ecartico/'),
-                 label=TITLE,
-                 name=TITLE,
-                 dctitle=TITLE,
-                 description=DESCRIPTION,
-                 dcdescription=DESCRIPTION,
-                 url=[URIRef("http://www.vondel.humanities.uva.nl/ecartico/")],
-                 temporalCoverage=[Literal("1475-01-01/1725-12-31")],
-                 spatialCoverage=[Literal("The Netherlands")],
-                 dateModified=DATE,
-                 dcdate=DATE,
-                 dcmodified=DATE)
+    ds = Dataset(
+        create.term('id/ecartico/'),
+        label=TITLE,
+        name=TITLE,
+        dctitle=TITLE,
+        description=DESCRIPTION,
+        dcdescription=DESCRIPTION,
+        image=URIRef(
+            "http://www.vondel.humanities.uva.nl/ecartico/images/logo.png"),
+        url=[URIRef("http://www.vondel.humanities.uva.nl/ecartico/")],
+        temporalCoverage=[Literal("1475-01-01/1725-12-31")],
+        spatialCoverage=[Literal("The Netherlands")],
+        dateModified=DATE,
+        dcdate=DATE,
+        dcmodified=DATE)
 
     # Add the datasets as separate graphs. Metadata on these graphs is in the
 
@@ -96,13 +99,27 @@ Current projects are:
     #                         encodingFormat="application/turtle")
 
     g = rdflib.Graph(identifier=guri)
+
+    g.bind('schema', schema)
+    g.bind('foaf', foaf)
+    g.bind('dcterms', dcterms)
+    g.bind('owl', OWL)
+    g.bind('pnv', Namespace('https://w3id.org/pnv#'))
+    g.bind(
+        'ecartico',
+        Namespace('http://www.vondel.humanities.uva.nl/ecartico/lod/vocab/#'))
+    g.bind('bio', Namespace('http://purl.org/vocab/bio/0.1/'))
+    g.bind('sem', Namespace('http://semanticweb.cs.vu.nl/2009/11/sem/#'))
+    g.bind('skos', Namespace('http://www.w3.org/2004/02/skos/core#'))
+    g.bind('time', Namespace('http://www.w3.org/2006/time#'))
+
     g.parse(fp, format='nt')
 
     dsG.add_graph(g)
 
     ds.triples = sum(
         1
-        for i in dsG.graph(identifier=create.term('id/ecartico/')).subjects())
+        for i in g.subjects())
 
     dsG.bind('void', void)
     dsG.bind('dcterms', dcterms)

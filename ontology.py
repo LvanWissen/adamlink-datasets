@@ -55,6 +55,8 @@ class Dataset(rdfSubject):
                                range_type=schema.DataDownload)
     dateModified = rdfSingle(schema.dateModified)
 
+    image = rdfSingle(schema.image, range_type=URIRef)
+
     ########
     # void #
     ########

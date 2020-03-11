@@ -85,6 +85,7 @@ Maakt en publiceert u data met (historische) straat-, gebouw- of persoonsnamen? 
                  dctitle=TITLE,
                  description=DESCRIPTION,
                  dcdescription=DESCRIPTION,
+                 image=URIRef("https://adamlink.nl/img/footerimg.jpg"),
                  url=[URIRef("https://www.adamlink.nl/")],
                  temporalCoverage=[Literal("1275-10-27/..")],
                  spatialCoverage=[Literal("Amsterdam")],
