@@ -1,3 +1,3 @@
-# adamlink-datasets
+# create-datasets
 
-Script to download/process the Adamlink data and output them in sperate named graphs. 
+Scripts to download, process, and harmonize output from several datasets. Triples are stored in a named graph on the https://data.create.humanities.uva.nl/id/ namespace. See the current overview of available datasets on https://data.create.humanities.uva.nl/. 
