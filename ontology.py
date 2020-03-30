@@ -40,8 +40,8 @@ class Dataset(rdfSubject):
                              range_type=(URIRef, Literal,
                                          schema.PropertyValue))
     keywords = rdfMultiple(schema.keywords, range_type=Literal)
-    license = rdfMultiple(schema.license,
-                          range_type=(URIRef, schema.CreativeWork))
+    licenseprop = rdfSingle(schema.license,
+                            range_type=(URIRef, schema.CreativeWork))
     sameAs = rdfMultiple(schema.sameAs, range_type=URIRef)
     spatialCoverage = rdfMultiple(schema.spatialCoverage,
                                   range_type=(Literal, schema.Place))

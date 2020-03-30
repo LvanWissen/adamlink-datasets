@@ -21,7 +21,7 @@ rdflib.graph.DATASET_DEFAULT_GRAPH_ID = create
 rdflib.NORMALIZE_LITERALS = False
 
 
-def main(fp='data/onstage.nt'):
+def main(fp=None):
 
     # If there was no format issue in the streets data, this function would
     # work. Instead, download the data yourself and point to it:
@@ -30,32 +30,41 @@ def main(fp='data/onstage.nt'):
     dsG = rdflib.Dataset()  # rdflib Dataset
     rdfSubject.db = dsG  # hook onto rdfAlchemy
 
-    TITLE = ["ONSTAGE"]
+    TITLE = ["STCN"]
     DESCRIPTION = [
         Literal(
-            """Online Datasystem of Theatre in Amsterdam from the Golden Age to the present. This is your address for questions about the repertoire, performances, popularity and revenues of the cultural program in Amsterdam’s public theatre during the period 1637 - 1772. All data provided in this system links to archival source materials in contemporary administration.
+            """STCN Golden Agents dump. schema:PublicationEvents explicitly typed.""",
+            lang='en'),
+        Literal(
+            """De STCN is de retrospectieve nationale bibliografie van Nederland voor de periode 1540-1800; ook opgenomen zijn summiere beschrijvingen van Nederlandse (post-)incunabelen.
+Het bestand staat als wetenschappelijk bibliografisch onderzoeksinstrument aan iedereen ter beschikking. Uiteindelijk zal de STCN beschrijvingen bevatten van alle boeken die tot 1800 in Nederland zijn verschenen, en van alle boeken die buiten Nederland in de Nederlandse taal zijn gepubliceerd.
 
-The [Shows page](http://www.vondel.humanities.uva.nl/onstage/shows/) gives you access by date to chronological lists of the theater program, and the plays staged per day. At the [Plays page](http://www.vondel.humanities.uva.nl/onstage/plays/) you have access to the repertoire by title, and for each play you will find its performances and revenues throughout time. At the [Persons page](http://www.vondel.humanities.uva.nl/onstage/persons/) you can access the data for playwrights, actors and actresses, and translators involved in the rich national and international variety of the Amsterdam Theater productions.
+De STCN wordt samengesteld op basis van collecties in binnen- en buitenland. Alle boeken zijn met het boek in de hand (in autopsie) beschreven. De omvang van het bestand was begin 2018 ca. 210.000 titels in ongeveer 550.000 exemplaren. Het bestand wordt dagelijks uitgebreid.
 
-Go see your favorite play!""",
-            lang='en')
+De STCN wordt samengesteld en uitgegeven door de Koninklijke Bibliotheek.""",
+            lang='nl')
     ]
 
     DATE = Literal(datetime.datetime.now().strftime('%Y-%m-%d'),
                    datatype=XSD.datetime)
 
     ds = Dataset(
-        create.term('id/onstage/'),
+        create.term('id/stcn/'),
         label=TITLE,
         name=TITLE,
         dctitle=TITLE,
         description=DESCRIPTION,
         dcdescription=DESCRIPTION,
         image=URIRef(
-            "http://www.vondel.humanities.uva.nl/onstage/images/logo.png"),
-        url=[URIRef("http://www.vondel.humanities.uva.nl/onstage/")],
-        temporalCoverage=[Literal("1637-01-01/1772-12-31")],
-        spatialCoverage=[Literal("Amsterdam")],
+            "https://www.kb.nl/sites/default/files/styles/indexplaatje_conditional/public/stcn-00.jpg"
+        ),
+        url=[
+            URIRef(
+                "https://www.kb.nl/organisatie/onderzoek-expertise/informatie-infrastructuur-diensten-voor-bibliotheken/short-title-catalogue-netherlands-stcn"
+            )
+        ],
+        temporalCoverage=[Literal("1540-01-01/1800-12-31")],
+        spatialCoverage=[Literal("The Netherlands")],
         dateModified=DATE,
         dcdate=DATE,
         dcmodified=DATE,
@@ -65,7 +74,7 @@ Go see your favorite play!""",
     # Add the datasets as separate graphs. Metadata on these graphs is in the
 
     # default graph.
-    guri = create.term('id/onstage/')
+    guri = create.term('id/stcn/')
 
     # download = DataDownload(None,
     #                         contentUrl=URIRef(uri),
@@ -78,15 +87,19 @@ Go see your favorite play!""",
     g.bind('dcterms', dcterms)
     g.bind('owl', OWL)
     g.bind('pnv', Namespace('https://w3id.org/pnv#'))
-    g.bind(
-        'onstage',
-        Namespace('http://www.vondel.humanities.uva.nl/onstage/lod/vocab/#'))
-    g.bind('bio', Namespace('http://purl.org/vocab/bio/0.1/'))
+    g.bind('kbdef', Namespace('http://data.bibliotheken.nl/def#'))
+    # g.bind('bio', Namespace('http://purl.org/vocab/bio/0.1/'))
     g.bind('sem', Namespace('http://semanticweb.cs.vu.nl/2009/11/sem/#'))
     g.bind('skos', Namespace('http://www.w3.org/2004/02/skos/core#'))
     g.bind('time', Namespace('http://www.w3.org/2006/time#'))
 
-    g.parse(fp, format='nt')
+    turtlefiles = [
+        os.path.join('data/stcn', i) for i in os.listdir('data/stcn')
+        if i.endswith('.ttl')
+    ]
+    for n, f in enumerate(turtlefiles, 1):
+        print(f"Parsing {n}/{len(turtlefiles)}\t {f}")
+        g.parse(f, format='turtle')
 
     dsG.add_graph(g)
 
@@ -97,7 +110,7 @@ Go see your favorite play!""",
     dsG.bind('schema', schema)
 
     print("Serializing!")
-    dsG.serialize('datasets/onstage.trig', format='trig')
+    dsG.serialize('datasets/stcn.trig', format='trig')
 
 
 if __name__ == "__main__":

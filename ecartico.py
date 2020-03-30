@@ -18,6 +18,7 @@ foaf = Namespace("http://xmlns.com/foaf/0.1/")
 dcterms = Namespace("http://purl.org/dc/terms/")
 
 rdflib.graph.DATASET_DEFAULT_GRAPH_ID = create
+rdflib.NORMALIZE_LITERALS = False
 
 
 def main(fp='data/ecartico.nt'):
@@ -87,7 +88,8 @@ Current projects are:
         spatialCoverage=[Literal("The Netherlands")],
         dateModified=DATE,
         dcdate=DATE,
-        dcmodified=DATE)
+        dcmodified=DATE,
+        licenseprop=URIRef("https://creativecommons.org/licenses/by-sa/3.0/"))
 
     # Add the datasets as separate graphs. Metadata on these graphs is in the
 
@@ -117,9 +119,7 @@ Current projects are:
 
     dsG.add_graph(g)
 
-    ds.triples = sum(
-        1
-        for i in g.subjects())
+    ds.triples = sum(1 for i in g.subjects())
 
     dsG.bind('void', void)
     dsG.bind('dcterms', dcterms)
